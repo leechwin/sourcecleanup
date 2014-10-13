@@ -10,7 +10,7 @@ Source Clean Up for the applicable rules of the source.
 # Usage
 - Downalod jar file in SourceCleanUp/jar/SourceCleanUp.jar
 - Run command following
-- java -jar SourceCleanUp.jar <path>
+- java -jar SourceCleanUp.jar "path"
 - Work all the sub-folders of the path
  
 # Author
