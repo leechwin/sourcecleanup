@@ -11,6 +11,7 @@ Source Clean Up for the applicable rules of the source.
 - Downalod jar file in SourceCleanUp/jar/SourceCleanUp.jar
 - Run command following
 - java -jar SourceCleanUp.jar "path"
+- example: java -jar SourceCleanUp.jar /home/user/targetFolder/
 - Work all the sub-folders of the path
  
 # Author
