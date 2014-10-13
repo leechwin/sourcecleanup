@@ -2,7 +2,6 @@
 Source Clean Up for the applicable rules of the source.
 
 # Rules
-- Source Clean Up Rules
 - Tab to space
 - Remove tailing space
 - Remove tailing tab
