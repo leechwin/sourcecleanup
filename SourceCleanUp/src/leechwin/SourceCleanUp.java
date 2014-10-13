@@ -18,33 +18,34 @@ import org.apache.commons.io.FilenameUtils;
  * - Remove tailing tab
  * - Remove "\r" of "\r\n" in windows env.
  *
- * TODO:: ignore folder?
- *        input for root dir
- *
  *  @author leechwin1@gmail.com
  */
 public class SourceCleanUp {
 
     // you can choice the target file
-    public static final String SOURCE_FILE_EXTENSION = "java";
+    public static final String DEFAULT_FILE_EXTENSION = "java";
 
     public static final String TAB = "	";
     public static final String SPACE = "    ";
 
     public static final String TEMP_FILE_NAME = "temp.text";
 
-    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar <absolutely root folder path>\n"
-                                     + "Example: java -jar SourceCleanUp.jar /home/user/targetRootFolder\n";
+    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar <absolutely root folder path> {file extension}\n"
+                                     + "Example: java -jar SourceCleanUp.jar /home/user/targetRootFolder java\n";
+
+    public static String SOURCE_FILE_EXTENSION = DEFAULT_FILE_EXTENSION;
 
     public static void main( String[] args ) {
         if ( null == args || 0 == args.length ) {
             System.out.println(USAGE);
             return;
         }
-        // input for root folder
-        // test
-        //String rootFolder = System.getProperty("user.dir") + "/src/leechwin/test";
+
         String rootFolder = args[0];
+        if ( 1 < args.length  ) {
+            SOURCE_FILE_EXTENSION = args[1];
+        }
+        System.out.println("RootFolder: " + args[0] + " , " + "File extension: " + SOURCE_FILE_EXTENSION);
 
         ArrayList<File> files = new ArrayList<File>();
         try {
