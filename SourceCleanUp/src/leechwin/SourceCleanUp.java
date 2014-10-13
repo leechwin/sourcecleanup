@@ -33,16 +33,27 @@ public class SourceCleanUp {
 
     public static final String TEMP_FILE_NAME = "temp.text";
 
-    public static void main( String[] args ) {
-        // input for root folder
-        // String rootFolder = args[0];
-        // String rootFolder = "/home/leechwin/git/webapp-eplugin";
+    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar <absolutely root folder path>\n"
+                                     + "Example: java -jar SourceCleanUp.jar /home/user/targetRootFolder\n";
 
+    public static void main( String[] args ) {
+        if ( null == args || 0 == args.length ) {
+            System.out.println(USAGE);
+            return;
+        }
+        // input for root folder
         // test
-        String rootFolder = System.getProperty("user.dir") + "/src/leechwin/test";
+        //String rootFolder = System.getProperty("user.dir") + "/src/leechwin/test";
+        String rootFolder = args[0];
 
         ArrayList<File> files = new ArrayList<File>();
-        getFileLists( rootFolder, files );
+        try {
+            getFileLists( rootFolder, files );
+        } catch (Exception e) {
+            System.out.println("Error: Invalid root folder!!");
+            return;
+        }
+
         for ( File file : files ) {
             try {
                 // all methods throw IOException this is important
@@ -62,7 +73,7 @@ public class SourceCleanUp {
                     System.out.println("Success: " + file.getAbsolutePath() );
                 }
             } catch (IOException e) {
-                System.out.println("failed IOException");
+                System.out.println("Failed IOException");
             }
         }
     }
