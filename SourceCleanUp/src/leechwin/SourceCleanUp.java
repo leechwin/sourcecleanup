@@ -48,6 +48,13 @@ public class SourceCleanUp {
                 // all methods throw IOException this is important
                 // because if one part fails we don't want to move on
                 writeFile( readFile(file) );
+
+                // delete orign file
+                if ( file.exists() ) {
+                    file.delete();
+                }
+
+                // tmp file move to origin file
                 File tempFile = new File(TEMP_FILE_NAME);
                 if (!tempFile.renameTo(file)) {
                     System.out.println("rename failed");
