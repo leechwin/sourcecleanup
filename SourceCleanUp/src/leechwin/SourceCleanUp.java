@@ -41,10 +41,14 @@ public class SourceCleanUp {
             return;
         }
 
+        // set the target Folder
         String rootFolder = args[0];
+
         if ( 1 < args.length  ) {
+            // set the file extension
             SOURCE_FILE_EXTENSION = args[1];
         }
+
         System.out.println("RootFolder: " + args[0] + " , " + "File extension: " + SOURCE_FILE_EXTENSION);
 
         ArrayList<File> files = new ArrayList<File>();
