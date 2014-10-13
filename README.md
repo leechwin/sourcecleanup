@@ -1,5 +1,12 @@
 # Source Clean Up
-Source Clean Up for the alignment of the source.
+Source Clean Up for the applicable rules of the source.
+
+# Rules
+- Source Clean Up Rules
+- Tab to space
+- Remove tailing space
+- Remove tailing tab
+- Remove "\r" of "\r\n" in windows env.
 
 # Usage
 - Downalod jar file in SourceCleanUp/jar/SourceCleanUp.jar
