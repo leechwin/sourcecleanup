@@ -98,7 +98,7 @@ public class SourceCleanUp {
                 // send it off to have trailing whitespace trimmed
                 text_wo_tabs = trimEnd(text_wo_tabs);
                 contents.append(text_wo_tabs);
-                contents.append(System.getProperty("line.separator"));
+                contents.append('\n');
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
