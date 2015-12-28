@@ -9,7 +9,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Source Clean Up Rules
@@ -22,64 +28,69 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class SourceCleanUp {
 
-    // you can choice the target file
+    public static Logger logger = Logger.getLogger(SourceCleanUp.class);
+
     public static final String DEFAULT_FILE_EXTENSION = "java";
 
-    public static final String TAB = "	";
+    public static final String TAB = "    ";
     public static final String SPACE = "    ";
-
     public static final String TEMP_FILE_NAME = "temp.text";
 
-    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar <absolutely root folder path> {file extension}\n"
+    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar -p <absolutely root folder path> -e {file extension}\n"
                                      + "Example: java -jar SourceCleanUp.jar /home/user/targetRootFolder java\n";
 
     public static String SOURCE_FILE_EXTENSION = DEFAULT_FILE_EXTENSION;
 
     public static void main( String[] args ) {
-        if ( null == args || 0 == args.length ) {
-            System.out.println(USAGE);
-            return;
-        }
-
-        // set the target Folder
-        String rootFolder = args[0];
-
-        if ( 1 < args.length  ) {
-            // set the file extension
-            SOURCE_FILE_EXTENSION = args[1];
-        }
-
-        System.out.println("RootFolder: " + args[0] + " , " + "File extension: " + SOURCE_FILE_EXTENSION);
-
-        ArrayList<File> files = new ArrayList<File>();
+        Options options = new Options();
+        options.addOption("h", "help", false, "print this message");
+        options.addOption("p", "path", true, "path");
+        options.addOption("e", "extension", false, "file extension");
+        
+        CommandLineParser parser = new DefaultParser();
         try {
-            getFileLists( rootFolder, files );
-        } catch (Exception e) {
-            System.out.println("Error: Invalid root folder!!");
-            return;
-        }
-
-        for ( File file : files ) {
-            try {
-                // all methods throw IOException this is important
-                // because if one part fails we don't want to move on
-                writeFile( readFile(file) );
-
-                // delete orign file
-                if ( file.exists() ) {
-                    file.delete();
-                }
-
-                // tmp file move to origin file
-                File tempFile = new File(TEMP_FILE_NAME);
-                if (!tempFile.renameTo(file)) {
-                    System.out.println("rename failed");
-                } else {
-                    System.out.println("Success: " + file.getAbsolutePath() );
-                }
-            } catch (IOException e) {
-                System.out.println("Failed IOException");
+            CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption("h")) {
+                System.out.println(USAGE);
+                return;
             }
+            if (cmd.hasOption("e")) {
+                SOURCE_FILE_EXTENSION = cmd.getOptionValue("e");
+            }
+            String rootPath = cmd.getOptionValue("p");
+
+            ArrayList<File> files = new ArrayList<File>();
+            try {
+                getFileLists( rootPath, files );
+            } catch (Exception e) {
+                System.out.println("Error: Invalid root folder!!");
+                return;
+            }
+
+            for ( File file : files ) {
+                try {
+                    // all methods throw IOException this is important
+                    // because if one part fails we don't want to move on
+                    writeFile( readFile(file) );
+
+                    // delete orign file
+                    if ( file.exists() ) {
+                        file.delete();
+                    }
+
+                    // tmp file move to origin file
+                    File tempFile = new File(TEMP_FILE_NAME);
+                    if (!tempFile.renameTo(file)) {
+                        System.out.println("rename failed");
+                    } else {
+                        System.out.println("Success: " + file.getAbsolutePath() );
+                    }
+                } catch (IOException e) {
+                    System.out.println("Failed IOException");
+                }
+            }
+        } catch (ParseException e1) {
+            // TODO Auto-generated catch block
         }
     }
 
