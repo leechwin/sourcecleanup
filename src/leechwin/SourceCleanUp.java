@@ -17,12 +17,14 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
 
 /**
- * Source Clean Up Rules
- * - Tab to space
- * - Remove tailing space
- * - Remove tailing tab
- * - Remove "\r" of "\r\n" in windows env.
- *
+ * Source cleanup<br>
+ * <h4>Rules</h4>
+ * <ul>
+ *     <li>Tab to space></li>
+ *     <li>Remove tailing space</li>
+ *     <li>Remove tailing tab</li>
+ *     <li>Remove "\r" of "\r\n" in windows env.</li>
+ * </ul>
  *  @author leechwin1@gmail.com
  */
 public class SourceCleanUp {
@@ -53,7 +55,6 @@ public class SourceCleanUp {
                 printUsage();
                 return;
             }
-
             if (cmd.hasOption("extension")) {
                 SOURCE_FILE_EXTENSION = cmd.getOptionValue("e");
             }
@@ -71,12 +72,10 @@ public class SourceCleanUp {
                     // all methods throw IOException this is important
                     // because if one part fails we don't want to move on
                     writeFile( readFile(file) );
-
                     // delete orign file
                     if ( file.exists() ) {
                         file.delete();
                     }
-
                     // tmp file move to origin file
                     File tempFile = new File(TEMP_FILE_NAME);
                     if (!tempFile.renameTo(file)) {
@@ -99,7 +98,6 @@ public class SourceCleanUp {
         try {
             reader = new BufferedReader(new FileReader(file));
             String text = null;
-
             // repeat until all lines are read
             while ((text = reader.readLine()) != null) {
                 // replace tabs with 4 whitespaces
@@ -146,7 +144,6 @@ public class SourceCleanUp {
 
     public static void getFileLists(String directoryName, ArrayList<File> files) {
         File directory = new File(directoryName);
-
         // get all the files from a directory
         File[] fList = directory.listFiles();
         for (File file : fList) {
