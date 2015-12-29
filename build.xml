@@ -1,15 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="package" name="Create Runnable Jar for SourceCleanUp">
-    <target name="package">
-        <jar destfile="dist/SourceCleanUp.jar">
+<!-- ======================================================================
+     Source Cleanup Build and Package
+     ChangHyun Lee <leechwin1@gmail.com>
+     ====================================================================== -->
+<project default="package" name="Build for Source Cleanup">
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="bin"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="scripts.dir" value="scripts"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="dist.source-cleanup.dir" value="${dist.dir}/source-cleanup"/>
+
+    <!-- build Entry Point -->
+    <target name="build">
+        <antcall target="init"/>
+        <antcall target="compile"/>
+    </target>
+
+   <!-- clean -->
+    <target name="clean">
+        <delete verbose="true" dir="${dist.dir}"/>
+        <delete verbose="true" dir="${build.dir}"/>
+    </target>
+
+    <!-- init -->
+    <target name="init" depends="clean">
+        <mkdir dir="${dist.source-cleanup.dir}"/>
+        <mkdir dir="${build.dir}"/>
+    </target>
+
+    <!-- compile -->
+    <target name="compile">
+        <path id="build-classpath">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </path>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on">
+            <classpath refid="build-classpath"/>
+        </javac>
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}" excludes="**/*.java" />
+        </copy>
+    </target>
+
+    <target name="buildjar" depends="build">
+        <!-- copy project resources -->
+        <copy file="README.md" todir="${dist.source-cleanup.dir}"/>
+        <copy file="LICENSE" todir="${dist.source-cleanup.dir}"/>
+        <copy todir="${dist.source-cleanup.dir}">
+            <fileset dir="${scripts.dir}">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        <chmod file="${dist.source-cleanup.dir}/start.sh" perm="755"/>
+
+        <!-- package for source-cleanup.jar -->
+        <jar destfile="${dist.source-cleanup.dir}/source-cleanup.jar">
             <manifest>
                 <attribute name="Main-Class" value="leechwin.SourceCleanUp"/>
-                <attribute name="Class-Path" value="bin/"/>
+                <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="bin"/>
-        	<zipfileset excludes="META-INF/*.SF" src="lib/log4j-1.2.17.jar"/>
+            <fileset dir="${build.dir}"/>
+
             <zipfileset excludes="META-INF/*.SF" src="lib/commons-io-2.4.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/commons-cli-1.3.1.jar"/>
         </jar>
+    </target>
+
+    <!-- package -->
+    <target name="package" depends="buildjar">
+        <!-- zip -->
+        <zip destfile="${dist.dir}/source-cleanup.zip">
+            <zipfileset file="${dist.source-cleanup.dir}/start.sh" filemode="755"/>
+            <zipfileset dir="${dist.source-cleanup.dir}" filemode="755" excludes="start.sh"/>
+        </zip>
     </target>
 </project>

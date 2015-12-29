@@ -3,7 +3,6 @@ package leechwin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,10 +11,10 @@ import java.util.ArrayList;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
 
 /**
  * Source Clean Up Rules
@@ -28,40 +27,40 @@ import org.apache.log4j.Logger;
  */
 public class SourceCleanUp {
 
-    public static Logger logger = Logger.getLogger(SourceCleanUp.class);
-
     public static final String DEFAULT_FILE_EXTENSION = "java";
-
-    public static final String TAB = "    ";
-    public static final String SPACE = "    ";
     public static final String TEMP_FILE_NAME = "temp.text";
 
-    public static final String USAGE = "Usage: java -jar SourceCleanUp.jar -p <absolutely root folder path> -e {file extension}\n"
-                                     + "Example: java -jar SourceCleanUp.jar /home/user/targetRootFolder java\n";
-
+    public static Options options = null;
     public static String SOURCE_FILE_EXTENSION = DEFAULT_FILE_EXTENSION;
 
     public static void main( String[] args ) {
-        Options options = new Options();
-        options.addOption("h", "help", false, "print this message");
-        options.addOption("p", "path", true, "path");
-        options.addOption("e", "extension", false, "file extension");
-        
         CommandLineParser parser = new DefaultParser();
+        options = new Options();
+        options.addOption("h", "help", false, Message.HELP_DESCRIPTION);
+        options.addOption("p", "path", true, Message.PATH_DESCRIPTION);
+        options.addOption("e", "extension", true, Message.EXTENSION_DESCRIPTION);
+
+        String startPath = null;
         try {
             CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption("h")) {
-                System.out.println(USAGE);
+            if (cmd.hasOption("help")) {
+                printUsage();
                 return;
             }
-            if (cmd.hasOption("e")) {
+            if (cmd.hasOption("path")) {
+                startPath = cmd.getOptionValue("p");
+            } else {
+                printUsage();
+                return;
+            }
+
+            if (cmd.hasOption("extension")) {
                 SOURCE_FILE_EXTENSION = cmd.getOptionValue("e");
             }
-            String rootPath = cmd.getOptionValue("p");
 
             ArrayList<File> files = new ArrayList<File>();
             try {
-                getFileLists( rootPath, files );
+                getFileLists(startPath, files);
             } catch (Exception e) {
                 System.out.println("Error: Invalid root folder!!");
                 return;
@@ -90,14 +89,13 @@ public class SourceCleanUp {
                 }
             }
         } catch (ParseException e1) {
-            // TODO Auto-generated catch block
+            System.out.println(e1.getMessage());
         }
     }
 
-    public static String readFile( File file ) {
+    public static String readFile(File file) {
         StringBuffer contents = new StringBuffer();
         BufferedReader reader = null;
-
         try {
             reader = new BufferedReader(new FileReader(file));
             String text = null;
@@ -105,66 +103,69 @@ public class SourceCleanUp {
             // repeat until all lines are read
             while ((text = reader.readLine()) != null) {
                 // replace tabs with 4 whitespaces
-                String text_wo_tabs = text.replace(TAB, SPACE);
+                String text_wo_tabs = text.replace(Message.TAB, Message.SPACE);
                 // send it off to have trailing whitespace trimmed
                 text_wo_tabs = trimEnd(text_wo_tabs);
                 contents.append(text_wo_tabs);
                 contents.append('\n');
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         } finally {
             try {
                 if (reader != null) { reader.close(); }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         return contents.toString();
     }
 
-    public static String trimEnd( String str ) {
+    public static String trimEnd(String str) {
         int len = str.length();
         char[] val = str.toCharArray();
         while ((0 < len) && (val[len - 1] <= ' ')) {
             len--;
         }
-
         return (len < str.length()) ? str.substring(0, len) : str;
     }
 
-    public static boolean writeFile( String contents ) throws IOException {
+    public static boolean writeFile(String contents) throws IOException {
         File file = new File(TEMP_FILE_NAME);
         boolean exist = file.createNewFile();
-        if ( !exist ) {
+        if (!exist) {
             System.out.println("File already exists. Removing it");
             file.delete();
         }
         FileWriter fstream = new FileWriter(file);
         BufferedWriter out = new BufferedWriter(fstream);
-        out.write( contents );
+        out.write(contents);
         out.close();
-        // System.out.println("File created successfully.");
         return true;
     }
 
-    public static void getFileLists( String directoryName, ArrayList<File> files ) {
+    public static void getFileLists(String directoryName, ArrayList<File> files) {
         File directory = new File(directoryName);
 
         // get all the files from a directory
         File[] fList = directory.listFiles();
-        for ( File file : fList ) {
-            if ( file.isFile() ) {
-                if ( SOURCE_FILE_EXTENSION.equalsIgnoreCase( FilenameUtils.getExtension(file.getName()) ) ) {
+        for (File file : fList) {
+            if (file.isFile()) {
+                if (SOURCE_FILE_EXTENSION.equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     files.add(file);
-                    // System.out.println(file.getAbsolutePath());
                 }
-            } else if ( file.isDirectory() ) {
-                getFileLists( file.getAbsolutePath(), files );
+            } else if (file.isDirectory()) {
+                getFileLists(file.getAbsolutePath(), files);
             }
         }
+    }
+
+    /**
+     * Print usage
+     */
+    public static void printUsage() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp(Message.USAGE_DESCRIPTION, options);
     }
 
 }

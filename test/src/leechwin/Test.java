@@ -1,4 +1,4 @@
-package leechwin.test;	
+package leechwin;
 
 public class Test {    
 
