@@ -2,7 +2,7 @@
 Source cleanup for the applicable rules of the source.
 
 # Rules
-- Tab to space
+- Tab to space(4)
 - Remove tailing space and tab
 - Remove "\r" of "\r\n" in windows env.
 
