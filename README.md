@@ -7,8 +7,8 @@ Source cleanup for the applicable rules of the source.
 - Remove "\r" of "\r\n" in windows env.
 
 # Install
-- Downalod zip file in dist folder (source-cleanup.zip)
-- Extract downloaded file and run start.bat or start.sh in the directory.
+- Downalod zip file in dist folder (**source-cleanup.zip**)
+- Extract downloaded file and run **start.bat** or **start.sh** in the directory.
 
 # Usage
 Run command following and work all the sub-folders of the path
