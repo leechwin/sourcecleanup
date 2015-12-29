@@ -13,7 +13,7 @@ Source cleanup for the applicable rules of the source.
 # Usage
 Run command following and work all the sub-folders of the path
 
-* Usages: start.bat -p <absolute path> [options]
+* Usages: start.bat -p \<absolute path\> [options]
   * -e,--extension <arg>   set file extension(default java)
   * -h,--help              print this help message
   * -p,--path <arg>        set absolute path denoting the starting directory
