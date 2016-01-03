@@ -2,8 +2,8 @@
 Source cleanup for the applicable rules of the source.
 
 # Rules
-- Tab to space(4)
-- Remove tailing space and tab
+- Change tab to space(4)
+- Remove tailing spaces and tabs.
 - Remove "\r" of "\r\n" in windows env.
 
 # Install
